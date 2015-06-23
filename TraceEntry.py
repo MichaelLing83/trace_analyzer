@@ -2,12 +2,18 @@
 
 import logging
 
-class TraceEntry(dict):
+class TraceEntry:
     '''
     Representing one trace entry. Initialized with one regular expression and a string.
     '''
-    def __init__(self, key=None):
-        pass
+    def __init__(self, data=None):
+        self._d = dict()
+        if isinstance(data, list) or isinstance(data, tuple):
+            assert len(data) %2 == 0, "input list/tuple must contain pairs of key, value, but its length is {}".format(len(data))
+            for i in range(int(len(data)/2)):
+                self._d[data[2 * i]] = data[2 * i + 1]
+        elif isinstance(data, dict):
+            self._d = dict(data)
 
 class Condition:
     '''
