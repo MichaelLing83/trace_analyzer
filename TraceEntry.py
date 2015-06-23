@@ -35,29 +35,37 @@ class Condition:
         self.value = str(value)
     def test(self, trace_entry):
         assert isinstance(trace_entry, TraceEntry), "must use an TraceEntry, get {} instead".format(type(trace_entry))
-        value = str(trace_entry[self.key])
-        if self.op == 'contain':
-            return self.value in value
-        elif self.op == 'match':
-            if re.search(self.value, value):
-                return True
-            else:
-                return False
-        elif self.op == 'gt':
-            return float(value) > float(self.value)
-        elif self.op == 'lt':
-            return float(value) < float(self.value)
-        elif self.op == 'eq':
-            return abs(float(self.value) - float(value)) < Condition.BIAS
-        elif self.op == 'ge':
-            return float(value) >= float(self.value)
-        elif self.op == 'le':
-            return float(value) <= float(self.value)
+        if self.is_basic:
+            value = str(trace_entry[self.key])
+            if self.op == 'contain':
+                return self.value in value
+            elif self.op == 'match':
+                if re.search(self.value, value):
+                    return True
+                else:
+                    return False
+            elif self.op == 'gt':
+                return float(value) > float(self.value)
+            elif self.op == 'lt':
+                return float(value) < float(self.value)
+            elif self.op == 'eq':
+                return abs(float(self.value) - float(value)) < Condition.BIAS
+            elif self.op == 'ge':
+                return float(value) >= float(self.value)
+            elif self.op == 'le':
+                return float(value) <= float(self.value)
+        else:
+            # this is a combined condition
+            if self.op == 'and':
+                return self.left.test(trace_entry) and self.right.test(trace_entry)
+            elif self.op == 'or':
+                return self.left.test(trace_entry) or self.right.test(trace_entry)
     def __and__(self, condition):
         assert isinstance(condition, Condition), "must operate with another Condition, get {} instead".format(type(condition))
         c = deepcopy(self)
         self.left = c
         self.right = condition
+        self.op = 'and'
         self.is_basic = False
         return self
     def __or__(self, condition):
@@ -65,6 +73,7 @@ class Condition:
         c = deepcopy(self)
         self.left = c
         self.right = condition
+        self.op = 'or'
         self.is_basic = False
         return self
 
