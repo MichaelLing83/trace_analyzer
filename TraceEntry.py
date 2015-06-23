@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import logging
+import re
 
 class TraceEntry:
     '''
@@ -22,8 +23,34 @@ class Condition:
     '''
     Representing the codition used to match one trace entry.
     '''
-    def __init__(self):
-        self._coditions = list()
+    OPS = ('contain', 'match', 'gt', 'lt', 'eq', 'ge', 'le')
+    BIAS = 0.000000001
+    def __init__(self, key, op, value):
+        assert isinstance(key, str), "key must be a string, but '{}' is of type {}".format(key, type(key))
+        assert op in Condition.OPS, "op={} is not one of the supported: {}".format(op, Condition.OPS)
+        self.key = str(key)
+        self.op = op
+        self.value = str(value)
+    def test(self, trace_entry):
+        assert isinstance(trace_entry, TraceEntry), "must use an TraceEntry, get {} instead".format(type(trace_entry))
+        value = str(trace_entry[self.key])
+        if self.op == 'contain':
+            return self.value in value
+        elif self.op == 'match':
+            if re.search(self.value, value):
+                return True
+            else:
+                return False
+        elif self.op == 'gt':
+            return float(value) > float(self.value)
+        elif self.op == 'lt':
+            return float(value) < float(self.value)
+        elif self.op == 'eq':
+            return abs(float(self.value) - float(value)) < Condition.BIAS
+        elif self.op == 'ge':
+            return float(value) >= float(self.value)
+        elif self.op == 'le':
+            return float(value) <= float(self.value)
     def __and__(self, condition):
         pass
 

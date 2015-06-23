@@ -17,3 +17,31 @@ class TestTraceEntry(unittest.TestCase):
         trace_entry = TraceEntry({'word': 'ability', 'count': '2011'})
         assert trace_entry['word'] == 'ability'
         assert trace_entry['count'] == '2011'
+
+class TestCondition(unittest.TestCase):
+    #def test_create_empty_Condition(self):
+        #c = Condition()
+    def test_create_non_empty_Condition(self):
+        c = Condition('word', 'contain', 'ty')
+        c = Condition('word', 'match', '.*ty$')
+        c = Condition('count', 'gt', 2000)
+        c = Condition('count', 'eq', 2000)
+        c = Condition('count', 'lt', 2000)
+        c = Condition('count', 'ge', 2000)
+        c = Condition('count', 'le', 2000)
+    def test_condition(self):
+        t = TraceEntry({'word': 'ability', 'count': '2011'})
+        c = Condition('word', 'contain', 'ty')
+        assert c.test(t) == True
+        c = Condition('word', 'match', '.*ty$')
+        assert c.test(t) == True
+        c = Condition('count', 'gt', 2000)
+        assert c.test(t) == True
+        c = Condition('count', 'eq', 2000)
+        assert c.test(t) == False
+        c = Condition('count', 'lt', 2000)
+        assert c.test(t) == False
+        c = Condition('count', 'ge', 2000)
+        assert c.test(t) == True
+        c = Condition('count', 'le', 2000)
+        assert c.test(t) == False
