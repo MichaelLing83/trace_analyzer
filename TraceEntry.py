@@ -2,6 +2,7 @@
 
 import logging
 import re
+from copy import deepcopy
 
 class TraceEntry:
     '''
@@ -28,6 +29,7 @@ class Condition:
     def __init__(self, key, op, value):
         assert isinstance(key, str), "key must be a string, but '{}' is of type {}".format(key, type(key))
         assert op in Condition.OPS, "op={} is not one of the supported: {}".format(op, Condition.OPS)
+        self.is_basic = True
         self.key = str(key)
         self.op = op
         self.value = str(value)
@@ -52,7 +54,19 @@ class Condition:
         elif self.op == 'le':
             return float(value) <= float(self.value)
     def __and__(self, condition):
-        pass
+        assert isinstance(condition, Condition), "must operate with another Condition, get {} instead".format(type(condition))
+        c = deepcopy(self)
+        self.left = c
+        self.right = condition
+        self.is_basic = False
+        return self
+    def __or__(self, condition):
+        assert isinstance(condition, Condition), "must operate with another Condition, get {} instead".format(type(condition))
+        c = deepcopy(self)
+        self.left = c
+        self.right = condition
+        self.is_basic = False
+        return self
 
 if __name__ == '__main__':
     import argparse

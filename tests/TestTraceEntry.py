@@ -45,3 +45,6 @@ class TestCondition(unittest.TestCase):
         assert c.test(t) == True
         c = Condition('count', 'le', 2000)
         assert c.test(t) == False
+    def test_combine_Condition(self):
+        assert isinstance(Condition('word', 'contain', 'ty') & Condition('word', 'match', '.*ty$'), Condition)
+        assert isinstance(Condition('count', 'gt', 2000) | Condition('count', 'eq', 2000), Condition)
