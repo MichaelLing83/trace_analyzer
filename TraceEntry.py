@@ -14,6 +14,9 @@ class TraceEntry:
                 self._d[data[2 * i]] = data[2 * i + 1]
         elif isinstance(data, dict):
             self._d = dict(data)
+    def __getitem__(self, name):
+        assert name in self._d.keys(), "Attribute {} doesn't exist, all attributes are {}".format(name, self._d.keys())
+        return self._d[name]
 
 class Condition:
     '''

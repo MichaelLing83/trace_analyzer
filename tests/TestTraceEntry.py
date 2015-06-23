@@ -8,3 +8,12 @@ class TestTraceEntry(unittest.TestCase):
         trace_entry = TraceEntry(('word', 'ability'))
         trace_entry = TraceEntry(('word', 'ability', 'count', '2011'))
         trace_entry = TraceEntry({'word': 'ability', 'count': '2011'})
+    def test_access_TraceEntry(self):
+        trace_entry = TraceEntry(('word', 'ability'))
+        assert trace_entry['word'] == 'ability'
+        trace_entry = TraceEntry(('word', 'ability', 'count', '2011'))
+        assert trace_entry['word'] == 'ability'
+        assert trace_entry['count'] == '2011'
+        trace_entry = TraceEntry({'word': 'ability', 'count': '2011'})
+        assert trace_entry['word'] == 'ability'
+        assert trace_entry['count'] == '2011'
