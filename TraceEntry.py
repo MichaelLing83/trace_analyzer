@@ -2,11 +2,20 @@
 
 import logging
 
-class TraceEntry:
+class TraceEntry(dict):
     '''
     Representing one trace entry. Initialized with one regular expression and a string.
     '''
-    def __init__(self, reg_ex, one_str):
+    def __init__(self, key=None):
+        pass
+
+class Condition:
+    '''
+    Representing the codition used to match one trace entry.
+    '''
+    def __init__(self):
+        self._coditions = list()
+    def __and__(self, condition):
         pass
 
 if __name__ == '__main__':
